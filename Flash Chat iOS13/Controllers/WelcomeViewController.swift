@@ -10,35 +10,31 @@ import UIKit
 import CLTypingLabel
 
 class WelcomeViewController: UIViewController {
-
+    
     @IBOutlet weak var titleLabel: CLTypingLabel!
     
     override func viewDidLoad() {
         super.viewDidLoad();
         titleLabel.text = "⚡️FlashChat";
-//        animateTitle();
-//        for (index,letter) in flash.enumerated() {
-//            print("\(index)-\(letter)");
-//        }
-     
-        
     }
-//    func animateTitle (){
-//        titleLabel.text = "";
-//        var charIndex = 0.0;
-//        flash.forEach { item in
-//            Timer.scheduledTimer(withTimeInterval: 0.1 * charIndex, repeats: false) { (timer) in
-//                self.titleLabel.text?.append(item);
-//            }
-//            charIndex += 1;
-//        }
-//    }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "test"{
-//            var destinationVc = segue.destination as !LoginViewController();
-//            destinationVc.
-//        }
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated);
+        navigationController?.setNavigationBarHidden(true, animated: animated);
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = UIColor(named: Constants.BrandColors.blue);
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated);
+        navigationController?.setNavigationBarHidden(false, animated: animated);
+    }
 }
 

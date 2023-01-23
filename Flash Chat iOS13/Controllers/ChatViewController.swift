@@ -8,11 +8,13 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 class ChatViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     var alert = ErrorAlert();
+    let db = Firestore.firestore();
     var messages = [
         Message(sender: "test@gmail.com", body: "test"),
         Message(sender: "test1@gmail.com", body: "1234"),
@@ -25,6 +27,7 @@ class ChatViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad();
+        loadData();
         navigationItem.rightBarButtonItem = barButtonItem;
         navigationItem.hidesBackButton = true;
         title = Constants.appName;
@@ -32,6 +35,19 @@ class ChatViewController: UIViewController {
         tableView.dataSource = self;
         tableView.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellReuseIdentifier: Constants.cellIdentifier);
         alert.delegate = self;
+    }
+    
+    func loadData (){
+        db.collection(Constants.FStore.collectionName).getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                self.alert.showAlert(title: "Error", message: err.localizedDescription);
+            } else {
+                for document in querySnapshot!.documents {
+                    let data = document.data();
+                    print(data);
+                }
+            }
+        }
     }
     
     @objc func logout(){
@@ -44,7 +60,16 @@ class ChatViewController: UIViewController {
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
-        
+        if let body = messageTextfield.text,let messageSender = Auth.auth().currentUser?.email{
+            db.collection(Constants.FStore.collectionName).addDocument(data: [
+                Constants.FStore.bodyField:body,
+                Constants.FStore.senderField:messageSender
+            ]) { error in
+                if let e = error{
+                    self.alert.showAlert(title: "Error", message: e.localizedDescription);
+                }
+            }
+        }
     }
     
     
